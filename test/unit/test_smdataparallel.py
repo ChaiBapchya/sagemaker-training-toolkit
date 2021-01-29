@@ -152,7 +152,9 @@ def test_smdataparallel_run_single_node_python(
         smdataparallel_runner = smdataparallel.SMDataParallelRunner(
             user_entry_point="train.py",
             args=["-v", "--lr", "35"],
-            env_vars={},
+            env_vars={
+                "SM_TRAINING_ENV": '{"additional_framework_parameters":{"sagemaker_instance_type":"ml.p3.16xlarge"}}'
+            },
             master_hostname=master_hostname,
             hosts=hosts,
             network_interface_name=network_interface_name,
@@ -199,6 +201,8 @@ def test_smdataparallel_run_single_node_python(
                 "PATH",
                 "-x",
                 smdataparallel_flag,
+                "-x",
+                "SAGEMAKER_INSTANCE_TYPE=ml.p3.16xlarge",
                 "-x",
                 "FI_PROVIDER=sockets",
                 "-x",
