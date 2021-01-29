@@ -101,6 +101,8 @@ class SMDataParallelRunner(process.ProcessRunner):
 
         TODO: add flag for toggling NCCL_DEBUG
         """
+        instance_type = self._get_instance_type()
+
         mpirun_command = [
             "mpirun",
             "--host",
@@ -140,6 +142,8 @@ class SMDataParallelRunner(process.ProcessRunner):
             "-x",
             smdataparallel_flag,
             "-x",
+            "SAGEMAKER_INSTANCE_TYPE={}".format(instance_type),
+            "-x",
             "FI_PROVIDER=sockets",
             "-x",
             "RDMAV_FORK_SAFE=1",
@@ -151,16 +155,12 @@ class SMDataParallelRunner(process.ProcessRunner):
             # in case of multi-node [distributed] training, smdataparallel_server_addr,
             # smdataparallel_server_port and interconnect_bandwidth will need to be set
 
-            instance_type = self._get_instance_type()
-
             mpirun_command.extend(
                 [
                     "-x",
                     "SMDATAPARALLEL_SERVER_ADDR={}".format(smdataparallel_server_addr),
                     "-x",
                     "SMDATAPARALLEL_SERVER_PORT={}".format(smdataparallel_server_port),
-                    "-x",
-                    "SAGEMAKER_INSTANCE_TYPE={}".format(instance_type),
                 ]
             )
 
